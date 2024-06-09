@@ -11,7 +11,6 @@ class User {
         $this->db = $db;
     }
 
-    // Rejestracja nowego użytkownika
     public function register($username, $email, $password) {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -20,7 +19,6 @@ class User {
         $stmt->execute([$username, $email, $hashedPassword]);
     }
 
-    // Logowanie użytkownika
     public function login($username, $password) {
         $sql = "SELECT * FROM users WHERE username = ?";
         $stmt = $this->db->prepare($sql);
@@ -28,34 +26,28 @@ class User {
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
-            // Użytkownik został znaleziony i hasło jest poprawne
             $this->id = $user['id'];
             $this->username = $user['username'];
             $this->password = $user['password'];
             $this->email = $user['email'];
             return true;
         } else {
-            // Użytkownik nie istnieje lub hasło jest niepoprawne
             return false;
         }
     }
 
-    // Pobranie ID zalogowanego użytkownika
     public function getId() {
         return $this->id;
     }
 
-    // Pobranie nazwy użytkownika zalogowanego użytkownika
     public function getUsername() {
         return $this->username;
     }
 
-    // Sprawdzenie, czy użytkownik jest zalogowany
     public function isLoggedIn() {
         return isset($this->id);
     }
 
-    // Wylogowanie użytkownika
     public function logout() {
         session_destroy();
         unset($this->id);
@@ -64,7 +56,6 @@ class User {
         unset($this->email);
     }
 
-    // Sprawdzenie, czy użytkownik o podanym adresie email już istnieje
     public function emailExists($email) {
         $sql = "SELECT COUNT(*) FROM users WHERE email = ?";
         $stmt = $this->db->prepare($sql);
@@ -74,7 +65,6 @@ class User {
         return $count > 0;
     }
 
-    // Sprawdzenie, czy użytkownik o podanej nazwie użytkownika już istnieje
     public function usernameExists($username) {
         $sql = "SELECT COUNT(*) FROM users WHERE username = ?";
         $stmt = $this->db->prepare($sql);
@@ -83,4 +73,29 @@ class User {
 
         return $count > 0;
     }
+
+    public function resetPassword($username, $email) {
+        $sql = "SELECT * FROM users WHERE username = ? AND email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$username, $email]);
+        $user = $stmt->fetch();
+
+        if (!$user) {
+            return false;
+        }
+
+        $newPassword = $this->generateTempPassword();
+
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $sql = "UPDATE users SET password = ? WHERE username = ? AND email = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$hashedPassword, $username, $email]);
+
+        return true;
+    }
+
+    private function generateTempPassword() {
+        return bin2hex(random_bytes(5));
+    }
+
 }
