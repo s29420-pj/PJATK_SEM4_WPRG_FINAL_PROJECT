@@ -21,15 +21,6 @@ class User {
         $stmt->close();
     }
 
-    public function removeUser($id) {
-        $db = new Database();
-        $conn = $db->getConnection();
-        $stmt = $conn->prepare("DELETE FROM wprg_users WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $stmt->close();
-    }
-
     public function getUser($id) {
         $db = new Database();
         $conn = $db->getConnection();
@@ -39,6 +30,17 @@ class User {
         $result = $stmt->get_result();
         $stmt->close();
         return $result->fetch_assoc();
+    }
+
+    public function getUserRole($id) {
+        $db = new Database();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare("SELECT role FROM wprg_users WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result->fetch_assoc()['role'];
     }
 
     public function authUser($username, $password) {
@@ -57,26 +59,6 @@ class User {
         $conn = $db->getConnection();
         $stmt = $conn->prepare("UPDATE wprg_users SET password = ? WHERE id = ?");
         $stmt->bind_param("si", $newPassword, $id);
-        $stmt->execute();
-        $stmt->close();
-    }
-
-    public function getUserRole($id) {
-        $db = new Database();
-        $conn = $db->getConnection();
-        $stmt = $conn->prepare("SELECT role FROM wprg_users WHERE id = ?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $stmt->close();
-        return $result->fetch_assoc()['role'];
-    }
-
-    public function editUserRole($role, $id) {
-        $db = new Database();
-        $conn = $db->getConnection();
-        $stmt = $conn->prepare("UPDATE wprg_users SET role = ? WHERE id = ?");
-        $stmt->bind_param("si", $role,$id);
         $stmt->execute();
         $stmt->close();
     }

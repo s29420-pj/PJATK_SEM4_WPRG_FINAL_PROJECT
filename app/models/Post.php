@@ -5,6 +5,8 @@ namespace models;
 require_once __DIR__ . '/../app.php';
 
 use Database;
+use Exception;
+use models\User;
 
 class Post {
     private $id;
@@ -14,16 +16,28 @@ class Post {
     private $date;
     private $authorId;
 
-    public function createPost($title, $content, $image = NULL, $authorId) {
+    public function createPost($title, $content, $image = NULL, $userId, $date) {
+        $user = new User();
+        $userRole = $user->getUserRole($userId);
+        if ($userRole == 'USER' || $userId == NULL) {
+            throw new Exception('You do not have permission to create a post.');
+        }
+
         $db = new Database();
         $conn = $db->getConnection();
-        $stmt = $conn->prepare("INSERT INTO wprg_posts (title, content, image, author_id) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sssi", $title, $content, $image, $authorId);
+        $stmt = $conn->prepare("INSERT INTO wprg_posts (title, content, image, date, author_id) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("sssi", $title, $content, $image, $date, $userId);
         $stmt->execute();
         $stmt->close();
     }
 
-    public function editPost($id) {
+    public function editPost($id, $title, $content, $image = NULL, $userId) {
+        $user = new User();
+        $userRole = $user->getUserRole($userId);
+        if ($userRole == 'USER' || $userId == NULL) {
+            throw new Exception('You do not have permission to edit a post.');
+        }
+
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("UPDATE wprg_posts SET title = ?, content = ?, image = ? WHERE id = ?");
@@ -32,7 +46,13 @@ class Post {
         $stmt->close();
     }
 
-    public function removePost($id) {
+    public function removePost($id, $userId) {
+        $user = new User();
+        $userRole = $user->getUserRole($userId);
+        if ($userRole == 'USER' || $userId == NULL) {
+            throw new Exception('You do not have permission to remove a post.');
+        }
+
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("DELETE FROM wprg_posts WHERE id = ?");
@@ -71,6 +91,4 @@ class Post {
         $stmt->close();
         return $result->fetch_all(MYSQLI_ASSOC);
     }
-
-
 }
