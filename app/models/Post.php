@@ -19,7 +19,7 @@ class Post {
     public function createPost($title, $content, $image = NULL, $userId, $date) {
         $user = new User();
         $userRole = $user->getUserRole($userId);
-        if ($userRole == 'USER' || $userId == NULL) {
+        if ($userRole == 'USER' || $userRole == NULL) {
             throw new Exception('You do not have permission to create a post.');
         }
 
@@ -34,7 +34,7 @@ class Post {
     public function editPost($id, $title, $content, $image = NULL, $userId) {
         $user = new User();
         $userRole = $user->getUserRole($userId);
-        if ($userRole == 'USER' || $userId == NULL) {
+        if ($userRole == 'USER' || $userRole == NULL) {
             throw new Exception('You do not have permission to edit a post.');
         }
 
@@ -49,7 +49,7 @@ class Post {
     public function removePost($id, $userId) {
         $user = new User();
         $userRole = $user->getUserRole($userId);
-        if ($userRole == 'USER' || $userId == NULL) {
+        if ($userRole == 'USER' || $userRole == NULL) {
             throw new Exception('You do not have permission to remove a post.');
         }
 
