@@ -6,15 +6,16 @@ require_once __DIR__ . '/../app.php';
 
 use Database;
 use Exception;
-use models\User;
 
-class Comment {
+class Comment
+{
     private $id;
     private $content;
     private $date;
     private $authorId;
 
-    public function createComment($content, $date, $userId, $postId) {
+    public function createComment($content, $date, $userId, $postId)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("INSERT INTO wprg_comments (content, date, wprg_users_id, wprg_posts_id) VALUES (?, ?, ?, ?)");
@@ -23,7 +24,8 @@ class Comment {
         $stmt->close();
     }
 
-    public function deleteComment($id, $adminId) {
+    public function deleteComment($id, $adminId)
+    {
         $user = new Admin();
         $admin = $user->getUserRole($adminId);
         if ($admin !== 'ADMIN') {
@@ -38,7 +40,8 @@ class Comment {
         $stmt->close();
     }
 
-    public function getComments($postId) {
+    public function getComments($postId)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT * FROM wprg_comments WHERE wprg_posts_id = ?");

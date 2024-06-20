@@ -2,9 +2,17 @@
 
 namespace controllers;
 
-use models\Comment;
-use Exception;
+class CommentController
+{
+    private $comment;
 
-class CommentController {
+    public function createComment($content, $date, $userId, $postId)
+    {
+        $this->comment->createComment($content, $date, $userId, $postId);
+    }
 
+    public function removeComment($id, $adminId)
+    {
+        $this->comment->deleteComment($id, $adminId);
+    }
 }

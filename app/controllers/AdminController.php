@@ -2,29 +2,34 @@
 
 namespace controllers;
 
-use Exception;
 use models\Admin;
 
-class AdminController {
+class AdminController
+{
     private $admin;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->admin = new Admin();
     }
 
-    public function createUser($username, $password, $role, $adminId) {
+    public function createUser($username, $password, $role, $adminId)
+    {
         $this->admin->createUser($username, $password, $role);
     }
 
-    public function removeUser($userId, $adminId) {
+    public function removeUser($userId, $adminId)
+    {
         $this->admin->removeUser($userId);
     }
 
-    public function resetPassword($userId, $newPassword, $adminId) {
+    public function resetPassword($userId, $newPassword, $adminId)
+    {
         $this->admin->resetPassword($userId, $newPassword);
     }
 
-    public function editUserRole($userId, $role, $adminId) {
+    public function editUserRole($userId, $role, $adminId)
+    {
         $this->admin->editUserRole($role, $userId);
     }
 }

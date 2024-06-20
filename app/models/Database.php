@@ -2,7 +2,8 @@
 
 require_once __DIR__ . '/../config.php';
 
-class Database {
+class Database
+{
     private $connection;
 
     public function __construct()
@@ -13,7 +14,8 @@ class Database {
         }
     }
 
-    public function getInstance() {
+    public function getInstance()
+    {
         if (self::$instance == null) {
             self::$instance = new Database();
         }

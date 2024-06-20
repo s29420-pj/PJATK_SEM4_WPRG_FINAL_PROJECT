@@ -6,9 +6,9 @@ require_once __DIR__ . '/../app.php';
 
 use Database;
 use Exception;
-use models\User;
 
-class Post {
+class Post
+{
     private $id;
     private $title;
     private $content;
@@ -16,7 +16,8 @@ class Post {
     private $date;
     private $authorId;
 
-    public function createPost($title, $content, $image = NULL, $userId, $date) {
+    public function createPost($title, $content, $image = NULL, $userId, $date)
+    {
         $user = new User();
         $userRole = $user->getUserRole($userId);
         if ($userRole == 'USER' || $userRole == NULL) {
@@ -31,7 +32,8 @@ class Post {
         $stmt->close();
     }
 
-    public function editPost($id, $title, $content, $image = NULL, $userId) {
+    public function editPost($id, $title, $content, $image = NULL, $userId)
+    {
         $user = new User();
         $userRole = $user->getUserRole($userId);
         if ($userRole == 'USER' || $userRole == NULL) {
@@ -46,7 +48,8 @@ class Post {
         $stmt->close();
     }
 
-    public function removePost($id, $userId) {
+    public function removePost($id, $userId)
+    {
         $user = new User();
         $userRole = $user->getUserRole($userId);
         if ($userRole == 'USER' || $userRole == NULL) {
@@ -61,7 +64,8 @@ class Post {
         $stmt->close();
     }
 
-    public function getPost($id) {
+    public function getPost($id)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT * FROM wprg_posts WHERE id = ?");
@@ -72,7 +76,8 @@ class Post {
         return $result->fetch_assoc();
     }
 
-    public function getPosts() {
+    public function getAllPosts()
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT * FROM wprg_posts");
@@ -82,7 +87,8 @@ class Post {
         return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function sortPostsByDate() {
+    public function sortPostsByDate()
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT * FROM wprg_posts ORDER BY date DESC");
@@ -90,5 +96,20 @@ class Post {
         $result = $stmt->get_result();
         $stmt->close();
         return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getPostAuthor($postId)
+    {
+        $db = new Database();
+        $conn = $db->getConnection();
+        $stmt = $conn->prepare("SELECT wprg_users.username
+FROM wprg_posts
+INNER JOIN wprg_users ON wprg_posts.wprg_users_id = wprg_users.id
+WHERE wprg_posts.id = ?;");
+        $stmt->bind_param("i", $postId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $stmt->close();
+        return $result->fetch_assoc()['username'];
     }
 }

@@ -6,13 +6,15 @@ require_once __DIR__ . '/../app.php';
 
 use Database;
 
-class User {
+class User
+{
     private $id;
     private $username;
     private $password;
     private $role;
 
-    public function createUser($username, $password, $role = 'USER') {
+    public function createUser($username, $password, $role = 'USER')
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("INSERT INTO wprg_users (username, password, role) VALUES (?, ?, ?)");
@@ -21,7 +23,8 @@ class User {
         $stmt->close();
     }
 
-    public function getUser($id) {
+    public function getUser($id)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT * FROM wprg_users WHERE id = ?");
@@ -32,7 +35,8 @@ class User {
         return $result->fetch_assoc();
     }
 
-    public function getUserRole($id) {
+    public function getUserRole($id)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT role FROM wprg_users WHERE id = ?");
@@ -43,7 +47,8 @@ class User {
         return $result->fetch_assoc()['role'];
     }
 
-    public function authUser($username, $password) {
+    public function authUser($username, $password)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("SELECT * FROM wprg_users WHERE username = ? AND password = ?");
@@ -54,7 +59,8 @@ class User {
         return $result->fetch_assoc();
     }
 
-    public function resetPassword($id, $newPassword) {
+    public function resetPassword($id, $newPassword)
+    {
         $db = new Database();
         $conn = $db->getConnection();
         $stmt = $conn->prepare("UPDATE wprg_users SET password = ? WHERE id = ?");
